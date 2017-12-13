@@ -28,15 +28,18 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   let c = new mariadb(config.mariadb);
+  let insertQuery = c.prepare('INSERT INTO sensor (sensor, sequence, data) VALUES (:sensor, :sequence, :data)');
 
   let body = req.body;
 
-  if (body.hasOwnProperty('sensor') && body.hasOwnProperty('data') && body.hasOwnProperty('sequence')) {
-    c.query('INSERT INTO sensor (sensor, sequence, data) VALUES ("' + body.sensor + '", ' + body.sequence + ', "' + body.data + '")',
-      function(err, rows) {
-        if (err)
-          throw err;
-      });
+  console.log("body", body);
+
+  if (body.hasOwnProperty('EUI') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
+    c.query(insertQuery({ sensor: body.EUI, sequence: body.seqno, data: body.data }), function(err, rows) {
+      if (err)
+        throw err;
+      console.dir(rows);
+    });
   }
 
   c.end();

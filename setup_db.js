@@ -1,7 +1,13 @@
 const mariadb = require('mariasql');
 const config = require('./config');
 
-let c = new mariadb(config.mariadb);
+let db = {
+  host: config.mariadb.host,
+  user: config.mariadb.user,
+  password: config.mariadb.password,
+};
+
+let c = new mariadb(db);
 
 c.query('DROP DATABASE IF EXISTS ' + config.mariadb.db + ';');
 
