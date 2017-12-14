@@ -22,5 +22,14 @@ else if (process.argv[2] === '1') {
         }
     });
 }
+else if (process.argv[2] === '2') {
+    console.log("updating table");
+
+    c.query('ALTER TABLE sensor MODIFY sensor_ts BIGINT;', function (err) {
+        if (err) {
+            throw err;
+        }
+    });
+}
 
 c.end();
