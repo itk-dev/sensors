@@ -1,0 +1,83 @@
+<html>
+<head>
+  <title>Sensors</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+
+  <script type="text/javascript">
+      function httpGetAsync (theUrl, callback) {
+          var xmlHttp = new XMLHttpRequest();
+          xmlHttp.onreadystatechange = function () {
+              console.log(xmlHttp);
+              if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
+                  callback(xmlHttp.responseText);
+              }
+          };
+          xmlHttp.open('GET', theUrl, true); // true for asynchronous
+          xmlHttp.send(null);
+      }
+
+      function getData (response) {
+          console.log(response);
+          var results = JSON.parse(response);
+
+          for (var i = 0; i < results.length; i++) {
+              var el = '<tr>';
+              el = el + '<td>' + results[i].id + '</td>';
+              el = el + '<td>' + results[i].sensor + '</td>';
+              el = el + '<td>' + results[i].sequence + '</td>';
+              el = el + '<td>' + results[i].sensor_ts + '</td>';
+              el = el + '<td>' + results[i].timestamp + '</td>';
+              el = el + '<td>' + results[i].data + '</td>';
+              el = el + '</tr>';
+
+              var domEl = document.getElementById('sensor_data_table');
+              domEl.innerHTML = domEl.innerHTML + el;
+          }
+      }
+
+      httpGetAsync('/results', getData);
+  </script>
+
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #aaa;
+      border: 1px solid #333;
+      padding: 5px;
+    }
+
+    td {
+      border: 1px solid #333;
+      padding: 5px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+<h1>Sensor data</h1>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Sequence number</th>
+      <th>Sensor ID</th>
+      <th>Sensor timestamp</th>
+      <th>DB timstamp</th>
+      <th>Data</th>
+    </tr>
+  </thead>
+  <tbody id="sensor_data_table">
+
+  </tbody>
+</table>
+</body>
+</html>

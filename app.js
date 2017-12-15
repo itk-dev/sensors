@@ -3,6 +3,7 @@ const app = express();
 const mariadb = require('mariasql');
 const config = require('./config');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -10,7 +11,13 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.html'));
+});
+
+app.get('/results', (req, res) => {
     let c = new mariadb(config.mariadb);
+
+    let result = [];
 
     c.query('SELECT * FROM sensor ORDER BY id DESC limit 50',
         function (err, rows) {
@@ -18,19 +25,9 @@ app.get('/', (req, res) => {
                 throw err;
             }
 
-            let result = '<style>td { border: 1px solid black; margin: 0}</style><h1>Sensor data</h1><table>';
+            result = rows;
 
-            for (let row of rows) {
-                result += '<tr>';
-                result += '<td>' + row.id + '</td>';
-                result += '<td>' + row.sensor + '</td>';
-                result += '<td>' + row.sequence + '</td>';
-                result += '<td>' + row.timestamp + '</td>';
-                result += '<td>' + row.data + '</td>';
-                result += '</tr>';
-            }
-
-            res.send(result);
+            res.send(JSON.stringify(result));
         });
 
     c.end();
@@ -38,7 +35,7 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
     let c = new mariadb(config.mariadb);
-    let insertQuery = c.prepare('INSERT INTO sensor (sensor, sequence, data) VALUES (:sensor, :sequence, :data)');
+    let insertQuery = c.prepare('INSERT INTO sensor (sensor, sequence, data, sensor_ts) VALUES (:sensor, :sequence, :data, :sensor_td)');
 
     let body = req.body;
 
@@ -46,7 +43,8 @@ app.post('/', (req, res) => {
         c.query(insertQuery({
             sensor: body.EUI,
             sequence: body.seqno,
-            data: body.data
+            data: body.data,
+            sensor_td: body.ts
         }), function (err) {
             if (err) {
                 throw err;
