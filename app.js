@@ -26,18 +26,26 @@ app.post('/', (req, res) => {
     let body = req.body;
 
     if (body.hasOwnProperty('EUI') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
-        knex('sensor').insert({
-            sensor: body.EUI,
-            sequence: body.seqno,
-            data: body.data,
-            sensor_ts: body.ts,
-            payload: JSON.stringify(body)
-        }).then(
-            function() {},
-            function (err) {
-                // @TODO: Log error.
+        // Avoid same sequence number.
+        knex('sensor').select().orderBy('id', 'desc').limit(1).andWhere({sequence: body.seqno}).then(rows => {
+            if (rows.length === 0) {
+                knex('sensor').insert({
+                    sensor: body.EUI,
+                    sequence: body.seqno,
+                    data: body.data,
+                    sensor_ts: body.ts,
+                    payload: JSON.stringify(body)
+                }).then(
+                    function() {},
+                    function (err) {
+                        // @TODO: Log error.
+                    }
+                );
             }
-        );
+            else {
+                // @TODO: Log duplicate.
+            }
+        });
     }
 
     res.send('');
