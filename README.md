@@ -1,5 +1,5 @@
 # sensors
-Nodejs to collect sensor data
+Nodejs to collect sensor data.
 
 ## Install
 ```sh
@@ -10,7 +10,7 @@ Edit the config to your needs.
 Setup the database with
 
 ```sh
-node setup_db.js
+node_modules/knex/bin/cli.js migrate:latest
 ```
 
 ## Running

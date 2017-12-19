@@ -1,9 +1,10 @@
+'use strict';
+
 const express = require('express');
 const app = express();
-const mariadb = require('mariasql');
-const config = require('./config');
 const bodyParser = require('body-parser');
 const path = require('path');
+const knex = require('knex')(require('./knexfile')[process.env.NODE_ENV || 'development']);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -15,44 +16,29 @@ app.get('/', (req, res) => {
 });
 
 app.get('/results', (req, res) => {
-    let c = new mariadb(config.mariadb);
-
-    let result = [];
-
-    c.query('SELECT * FROM sensor ORDER BY id DESC limit 50',
-        function (err, rows) {
-            if (err) {
-                throw err;
-            }
-
-            result = rows;
-
-            res.send(JSON.stringify(result));
-        });
-
-    c.end();
+    knex('sensor').orderBy('id', 'desc').limit(50).then(rows => {
+        'use strict';
+        res.send(JSON.stringify(rows));
+    });
 });
 
 app.post('/', (req, res) => {
-    let c = new mariadb(config.mariadb);
-    let insertQuery = c.prepare('INSERT INTO sensor (sensor, sequence, data, sensor_ts) VALUES (:sensor, :sequence, :data, :sensor_td)');
-
     let body = req.body;
 
     if (body.hasOwnProperty('EUI') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
-        c.query(insertQuery({
+        knex('sensor').insert({
             sensor: body.EUI,
             sequence: body.seqno,
             data: body.data,
-            sensor_td: body.ts
-        }), function (err) {
-            if (err) {
-                throw err;
+            sensor_ts: body.ts,
+            payload: JSON.stringify(body)
+        }).then(
+            function() {},
+            function (err) {
+                // @TODO: Log error.
             }
-        });
+        );
     }
-
-    c.end();
 
     res.send('');
 });
