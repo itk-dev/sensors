@@ -27,7 +27,7 @@ app.post('/', (req, res) => {
 
     if (body.hasOwnProperty('EUI') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
         // Avoid same sequence number.
-        knex('sensor').select().orderBy('id', 'desc').limit(1).andWhere({sequence: body.seqno}).then(rows => {
+        knex('sensor').where({sensor: body.EUI, sequence: body.seqno, sensor_ts: body.ts}).then(rows => {
             if (rows.length === 0) {
                 knex('sensor').insert({
                     sensor: body.EUI,
