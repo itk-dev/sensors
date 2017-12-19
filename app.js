@@ -25,7 +25,7 @@ app.get('/results', (req, res) => {
 app.post('/', (req, res) => {
     let body = req.body;
 
-    if (body.hasOwnProperty('EUI') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
+    if (body.hasOwnProperty('EUI') && body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
         // Avoid same sequence number.
         knex('sensor').where({sensor: body.EUI, sequence: body.seqno, sensor_ts: body.ts}).then(rows => {
             if (rows.length === 0) {
