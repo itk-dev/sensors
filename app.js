@@ -126,8 +126,13 @@ app.get('/api/recent', (req, res) => {
         .limit(1)
         .then(
             (data) => {
-                var buf = new Buffer(data[0].data, 'hex');
-                res.send(parsers[sensorId].parse(buf));
+                let buf = new Buffer(data[0].data, 'hex');
+
+                let result = parsers[sensorId].parse(buf);
+
+                result.sensor_ts = data[0].sensor_ts;
+                result.sensor = data[0].sensor;
+                res.send(result);
             }
         );
 });
