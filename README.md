@@ -2,6 +2,14 @@
 Nodejs to collect sensor data.
 
 ## Install
+Install modules
+
+```sh
+npm install
+```
+
+Create a configuration file from example.config.js
+
 ```sh
 cp example.config.js config.js
 ```

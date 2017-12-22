@@ -1,3 +1,9 @@
+/**
+ * Configuration file for knex - http://knexjs.org/.
+ */
+
+'use strict';
+
 const config = require('./config');
 
 module.exports = {

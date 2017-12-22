@@ -1,3 +1,12 @@
+/**
+ * @file
+ * Example configuration file.
+ *
+ * Copy this to config.js and adjust the values to your setup.
+ */
+
+'use strict';
+
 let config = {};
 
 config.database_client = 'mariasql';

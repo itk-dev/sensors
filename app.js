@@ -2,6 +2,7 @@
  * @file
  * Main app that sets up api and homepage.
  */
+
 'use strict';
 
 const express = require('express');
