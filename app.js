@@ -102,11 +102,14 @@ app.get('/api/results', (req, res) => {
 app.post('/', (req, res) => {
     let body = req.body;
 
+    // Demand that data.EUI, data.gws, data.data and data.seqno are set, before
+    // adding to the sensor table.
     if (body.hasOwnProperty('EUI') && body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
         // Avoid same sequence number.
         knex('sensor')
             .where({sensor: body.EUI, sequence: body.seqno, sensor_ts: body.ts})
             .then(rows => {
+                // Avoid duplicate entry.
                 if (rows.length === 0) {
                     knex('sensor').insert({
                         sensor: body.EUI,
@@ -114,16 +117,7 @@ app.post('/', (req, res) => {
                         data: body.data,
                         sensor_ts: body.ts,
                         payload: JSON.stringify(body)
-                    }).then(
-                        function () {
-                        },
-                        function () {
-                            // @TODO: Log error.
-                        }
-                    );
-                }
-                else {
-                    // @TODO: Log duplicate.
+                    });
                 }
             });
     }
@@ -152,13 +146,19 @@ app.get('/api/recent', (req, res) => {
         .limit(1)
         .then(
             (data) => {
-                let buf = new Buffer(data[0].data, 'hex');
+                // Handle if item was found.
+                if (data.length > 0) {
+                    let buf = new Buffer(data[0].data, 'hex');
 
-                let result = parsers[sensorId].parse(buf);
+                    let result = parsers[sensorId].parse(buf);
 
-                result.sensor_ts = data[0].sensor_ts;
-                result.sensor = data[0].sensor;
-                res.send(result);
+                    result.sensor_ts = data[0].sensor_ts;
+                    result.sensor = data[0].sensor;
+                    res.send(result);
+                }
+                else {
+                    res.status(404).send('');
+                }
             }
         );
 });
