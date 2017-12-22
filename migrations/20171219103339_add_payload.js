@@ -1,4 +1,17 @@
-exports.up = function (knex, Promise) {
+/**
+ * @file
+ * Migration to add payload column.
+ */
+
+/**
+ * Migration up.
+ *
+ * Adds the "payload" column of type json.
+ *
+ * @param knex
+ * @return {*}
+ */
+exports.up = function (knex) {
     return knex.schema.table('sensor', function (table) {
         'use strict';
 
@@ -6,7 +19,15 @@ exports.up = function (knex, Promise) {
     });
 };
 
-exports.down = function (knex, Promise) {
+/**
+ * Migration down.
+ *
+ * Remove payload column.
+ *
+ * @param knex
+ * @return {*}
+ */
+exports.down = function (knex) {
     return knex.schema.table('sensor', function (table) {
         'use strict';
 

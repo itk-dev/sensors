@@ -1,3 +1,7 @@
+/**
+ * @file
+ * Main app that sets up api and homepage.
+ */
 'use strict';
 
 const express = require('express');
@@ -6,7 +10,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const knex = require('knex')(require('./knexfile')[process.env.NODE_ENV || 'development']);
 const Parser = require('binary-parser').Parser;
+const config = require('./config');
 
+// Setup parsers.
 const parsers = {
     '0004A30B001E8EA2': new Parser()
         .endianess('big')
@@ -60,15 +66,26 @@ const parsers = {
         .uint16le('sensor_distance_to_water_value')
 };
 
+// Parse json and urlencoded bodies.
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+/**
+ * GET: /
+ *
+ * Serves the homepage.
+ */
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/index.html'));
 });
 
+/**
+ * GET: /api/results
+ *
+ * Get the latest 50 data packages.
+ */
 app.get('/api/results', (req, res) => {
     knex('sensor').orderBy('id', 'desc').limit(50).then(rows => {
         'use strict';
@@ -76,6 +93,11 @@ app.get('/api/results', (req, res) => {
     });
 });
 
+/**
+ * POST: /
+ *
+ * Add a data package to the service.
+ */
 app.post('/', (req, res) => {
     let body = req.body;
 
@@ -94,8 +116,7 @@ app.post('/', (req, res) => {
                     }).then(
                         function () {
                         },
-                        function (err) {
-                            console.log(err);
+                        function () {
                             // @TODO: Log error.
                         }
                     );
@@ -105,10 +126,14 @@ app.post('/', (req, res) => {
                 }
             });
     }
-
     res.send('');
 });
 
+/**
+ * GET: /api/recent?sensor=ID
+ *
+ * Get the most recent result for the sensor with ID.
+ */
 app.get('/api/recent', (req, res) => {
     let sensorId = req.query.sensor;
 
@@ -137,4 +162,7 @@ app.get('/api/recent', (req, res) => {
         );
 });
 
-app.listen(3000);
+/**
+ * Start listening to port.
+ */
+app.listen(config.port);

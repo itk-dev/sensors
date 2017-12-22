@@ -9,4 +9,6 @@ config.database_connection = {
     password: 'vagrant'
 };
 
+config.port = 3000;
+
 module.exports = config;

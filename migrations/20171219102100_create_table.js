@@ -1,4 +1,17 @@
-exports.up = function(knex, Promise) {
+/**
+ * @file
+ * Migration to add sensor table.
+ */
+
+/**
+ * Migration up.
+ *
+ * Adds the sensor table.
+ *
+ * @param knex
+ * @return {*}
+ */
+exports.up = function(knex) {
     return knex.schema.createTable('sensor', (table) => {
         table.increments('id');
         table.string('sensor');
@@ -9,6 +22,14 @@ exports.up = function(knex, Promise) {
     });
 };
 
-exports.down = function(knex, Promise) {
+/**
+ * Migration down.
+ *
+ * Removes the sensor table.
+ *
+ * @param knex
+ * @return {*}
+ */
+exports.down = function(knex) {
     return knex.schema.dropTable('sensor');
 };
