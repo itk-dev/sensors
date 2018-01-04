@@ -33,9 +33,9 @@ module.exports = function setup (options, imports, register) {
                 }
             }
 
-            console.log(dataPoints);
-
-            influx.writePoints(dataPoints)
+            influx.writePoints(dataPoints, {
+                precision: 's'
+            })
                 .then(() => {
                     console.log('success');
                 })
