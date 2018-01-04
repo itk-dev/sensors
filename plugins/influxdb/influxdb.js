@@ -28,15 +28,12 @@ module.exports = function setup (options, imports, register) {
                         measurement: obj.type,
                         tags: {sensor: data.EUI, sensor_id: obj.sensor_id},
                         fields: {value: obj.value},
-                        timestamp: data.ts
+                        timestamp: new Date(data.ts)
                     });
                 }
             }
 
             influx.writePoints(dataPoints)
-                .then(() => {
-                    console.log('success');
-                })
                 .catch(err => {
                     console.error(`Error saving data to InfluxDB! ${err.stack}`);
                 });
