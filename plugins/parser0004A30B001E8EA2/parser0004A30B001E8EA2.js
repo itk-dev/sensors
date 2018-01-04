@@ -12,26 +12,26 @@ module.exports = function setup(options, imports, register) {
         .endianess('big')
         .uint8('header_frame_counter')
         .uint8('header_frame_length')
-        .uint8('sensor_bat_sensor_id')
-        .uint8('sensor_bat_value')
-        .uint8('sensor_charging_power_sensor_id')
-        .uint16le('sensor_charging_power_value')
-        .uint8('sensor_temperature_sensor_id')
-        .floatle('sensor_temperature_value')
-        .uint8('sensor_humidity_sensor_id')
-        .floatle('sensor_humidity_value')
-        .uint8('sensor_pressure_sensor_id')
-        .floatle('sensor_pressure_value')
-        .uint8('sensor_lux_sensor_id')
-        .uint32le('sensor_lux_value')
-        .uint8('sensor_solar_radiation_sensor_id')
-        .floatle('sensor_solar_radiation_value')
-        .uint8('sensor_wind_speed_sensor_id')
-        .floatle('sensor_wind_speed_value')
-        .uint8('sensor_wind_vane_sensor_id')
-        .uint8('sensor_wind_vane_value')
-        .uint8('sensor_rain_sensor_id')
-        .floatle('sensor_rain_value');
+        .uint8('battery_sensor_id')
+        .uint8('battery_value')
+        .uint8('charging_power_sensor_id')
+        .uint16le('charging_power_value')
+        .uint8('air_temperature_sensor_id')
+        .floatle('air_temperature_value')
+        .uint8('humidity_sensor_id')
+        .floatle('humidity_value')
+        .uint8('pressure_sensor_id')
+        .floatle('pressure_value')
+        .uint8('lux_sensor_id')
+        .uint32le('lux_value')
+        .uint8('solar_radiation_sensor_id')
+        .floatle('solar_radiation_value')
+        .uint8('wind_speed_sensor_id')
+        .floatle('wind_speed_value')
+        .uint8('wind_vane_sensor_id')
+        .uint8('wind_vane_value')
+        .uint8('rain_sensor_id')
+        .floatle('rain_value');
 
     let eventBus = imports.eventbus;
 
@@ -39,6 +39,27 @@ module.exports = function setup(options, imports, register) {
         let buf = new Buffer(data, 'hex');
 
         let result = parser.parse(buf);
+
+        let values = [];
+
+        for (let key in result) {
+            if (result.hasOwnProperty(key)) {
+                if (key.indexOf('_sensor_id') > -1) {
+                    let split = key.split('_sensor_id');
+                    let id = result[key];
+
+                    let value = result[split[0] + '_value'];
+
+                    values.push({
+                        sensor_id: id,
+                        type: split[0],
+                        value: value
+                    });
+                }
+            }
+        }
+
+        result.values = values;
 
         eventBus.emit(returnEvent, result);
     });

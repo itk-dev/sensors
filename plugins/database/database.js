@@ -5,6 +5,10 @@ const knex = require('knex')(require('./knexfile')[process.env.NODE_ENV || 'deve
 module.exports = function setup (options, imports, register) {
     let database = {};
 
+    database.getSensorPackage = () => {
+
+    };
+
     database.getRecentSensorPackages = () => {
         return knex('sensor').orderBy('id', 'desc').limit(50);
     };

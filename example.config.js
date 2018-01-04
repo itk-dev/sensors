@@ -18,6 +18,11 @@ config.database_connection = {
     password: 'vagrant'
 };
 
+config.influxdb = {
+    host: 'localhost',
+    database: 'sensor'
+};
+
 // @TODO
 config.sensor_server_whitelist = [
 

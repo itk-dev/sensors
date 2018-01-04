@@ -7,6 +7,10 @@ module.exports = function setup(options, imports, register) {
     let database = imports.database;
     let server = imports.server;
 
+    server.get('/api/sensorpackage', (req, res) => {
+        res.status(500).send();
+    });
+
     /**
      * GET: /api/sensorpackage/recent
      *
@@ -37,8 +41,10 @@ module.exports = function setup(options, imports, register) {
         // Demand that data.gws, data.data and data.seqno are set, before
         // adding to the sensor table.
         if (body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
-            // @TODO: Error handling.
+            // Save to the database.
             database.addSensorPackage(body.EUI, body.seqno, body.ts, body.data, JSON.stringify(body));
+
+            eventBus.emit('sensor.new', body);
 
             res.status(200).send();
         }

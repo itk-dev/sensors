@@ -1,0 +1,10 @@
+{
+  "name": "influxdb",
+  "version": "0.0.1",
+  "main": "influxdb.js",
+  "private": true,
+  "plugin": {
+    "consumes": ["eventbus"],
+    "provides": []
+  }
+}
