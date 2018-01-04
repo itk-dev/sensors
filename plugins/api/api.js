@@ -32,7 +32,6 @@ module.exports = function setup(options, imports, register) {
     server.post('/', (req, res) => {
         let body = req.body;
 
-        // D
         if (body.hasOwnProperty('EUI') && config.sensor_whitelist.indexOf(body.EUI) === -1) {
             res.status(400).send();
             return;
@@ -40,7 +39,7 @@ module.exports = function setup(options, imports, register) {
 
         // Demand that data.gws, data.data and data.seqno are set, before
         // adding to the sensor table.
-        if (body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno')) {
+        if (body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno') && body.hasOwnProperty('ts')) {
             // Save to the database.
             database.addSensorPackage(body.EUI, body.seqno, body.ts, body.data, JSON.stringify(body));
 
