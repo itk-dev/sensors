@@ -18,6 +18,17 @@ config.database_connection = {
     password: 'vagrant'
 };
 
+// @TODO
+config.sensor_server_whitelist = [
+
+];
+
+config.sensor_whitelist = [
+    '0004A30B001E8EA2',
+    '0004A30B001E1694',
+    '0004A30B001E307C'
+];
+
 config.port = 3000;
 
 module.exports = config;

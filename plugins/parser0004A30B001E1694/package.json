@@ -1,0 +1,10 @@
+{
+  "name": "parser0004A30B001E1694",
+  "version": "0.0.1",
+  "main": "parser0004A30B001E1694.js",
+  "private": true,
+  "plugin": {
+    "consumes": ["eventbus"],
+    "provides": []
+  }
+}
