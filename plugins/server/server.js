@@ -2,7 +2,6 @@
  * @file
  * Server plugin. Adds a server and serves public folder.
  */
-
 'use strict';
 
 const path = require('path');

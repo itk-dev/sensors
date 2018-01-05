@@ -42,6 +42,7 @@ module.exports = function setup(options, imports, register) {
 
         let values = [];
 
+        // Convert parsed data to values array.
         for (let key in result) {
             if (result.hasOwnProperty(key)) {
                 if (key.indexOf('_sensor_id') > -1) {

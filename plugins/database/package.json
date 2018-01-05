@@ -4,7 +4,7 @@
   "main": "database.js",
   "private": true,
   "plugin": {
-    "consumes": [],
+    "consumes": ["logger"],
     "provides": ["database"]
   }
 }

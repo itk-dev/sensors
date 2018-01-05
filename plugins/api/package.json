@@ -4,7 +4,7 @@
   "main": "api.js",
   "private": true,
   "plugin": {
-    "consumes": ["eventbus", "database", "server"],
+    "consumes": ["eventbus", "database", "server", "logger"],
     "provides": []
   }
 }

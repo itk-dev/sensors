@@ -4,7 +4,7 @@
   "main": "parser0004A30B001E8EA2.js",
   "private": true,
   "plugin": {
-    "consumes": ["eventbus"],
+    "consumes": ["eventbus", "logger"],
     "provides": []
   }
 }

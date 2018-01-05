@@ -1,6 +1,7 @@
 module.exports = [
-    './plugins/database',
+    './plugins/logger',
     './plugins/eventbus',
+    './plugins/database',
     './plugins/server',
     './plugins/api',
     './plugins/influxdb',

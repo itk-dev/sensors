@@ -34,6 +34,15 @@ config.sensor_whitelist = [
     '0004A30B001E307C'
 ];
 
+config.logger = {
+    level: 'info',
+    console: false,
+    files: {
+        info: 'logs/info.log',
+        error: 'logs/errors.log'
+    }
+};
+
 config.port = 3000;
 
 module.exports = config;

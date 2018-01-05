@@ -1,11 +1,16 @@
+/**
+ * @file
+ * Api module. Provides API for sensor packages.
+ */
 'use strict';
 
 const config = require('./../../config');
 
 module.exports = function setup(options, imports, register) {
-    let eventBus = imports.eventbus;
-    let database = imports.database;
-    let server = imports.server;
+    const eventBus = imports.eventbus;
+    const database = imports.database;
+    const server = imports.server;
+    const logger = imports.logger;
 
     server.get('/api/sensorpackage', (req, res) => {
         res.status(500).send();
@@ -32,22 +37,32 @@ module.exports = function setup(options, imports, register) {
     server.post('/', (req, res) => {
         let body = req.body;
 
-        if (body.hasOwnProperty('EUI') && config.sensor_whitelist.indexOf(body.EUI) === -1) {
-            res.status(400).send();
-            return;
-        }
-
         // Demand that data.gws, data.data and data.seqno are set, before
         // adding to the sensor table.
-        if (body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno') && body.hasOwnProperty('ts')) {
-            // Save to the database.
-            database.addSensorPackage(body.EUI, body.seqno, body.ts, body.data, JSON.stringify(body));
+        if (body.hasOwnProperty('EUI') && body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno') && body.hasOwnProperty('ts')) {
+            // Check if the sensor is allowed access.
+            if (body.hasOwnProperty('EUI') && config.sensor_whitelist.indexOf(body.EUI) === -1) {
+                logger.warn('Sensor not whitelisted or has no EUI');
+                res.status(400).send();
+                return;
+            }
 
-            eventBus.emit('sensor.new', body);
+            // Check that the sensor package has not already been added.
+            database.getSensorPackage(body.EUI, body.seqno, body.ts).then((rows) => {
+                // Avoid duplicate entry.
+                if (rows.length === 0) {
+                    // Save to the database.
+                    database.addSensorPackage(body.EUI, body.seqno, body.ts, body.data, JSON.stringify(body));
+                }
 
-            res.status(200).send();
+                // Emit event that new sensor package has been added.
+                eventBus.emit('sensor.new', body);
+            });
+
+            res.status(201).send();
         }
         else {
+            logger.warn('Package does not have required fields: EUI, gws, data, seqno, ts');
             res.status(400).send();
         }
     });
@@ -68,15 +83,15 @@ module.exports = function setup(options, imports, register) {
             return;
         }
 
+        if (config.sensor_whitelist.indexOf(sensorId) === -1) {
+            res.status(400).send('Sensor not allowed');
+            return;
+        }
+
         database.getRecent(sensorId).then(
             (data) => {
                 // Handle if item was found.
                 if (data.length > 0) {
-                    if (config.sensor_whitelist.indexOf(sensorId) === -1) {
-                        res.status(404).send('Sensor not found');
-                        return;
-                    }
-
                     let now = new Date().getDate();
                     let requestEvent = 'parse.' + sensorId;
                     let returnEvent = requestEvent + '-' + now;
@@ -90,7 +105,7 @@ module.exports = function setup(options, imports, register) {
                     eventBus.emit(requestEvent, data[0].data, returnEvent);
                 }
                 else {
-                    res.status(404).send('');
+                    res.status(404).send();
                 }
             }
         );

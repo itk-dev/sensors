@@ -10,7 +10,8 @@
     "express": "^4.16.2",
     "influx": "^5.0.7",
     "knex": "^0.14.2",
-    "mariasql": "^0.2.6"
+    "mariasql": "^0.2.6",
+    "winston": "^3.0.0-rc1"
   },
   "devDependencies": {},
   "scripts": {
