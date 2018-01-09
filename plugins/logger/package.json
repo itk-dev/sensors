@@ -5,6 +5,12 @@
   "private": true,
   "plugin": {
     "consumes": [],
-    "provides": ["logger"]
+    "provides": [
+      "logger"
+    ]
+  },
+  "dependencies": {
+    "architect": "^0.1.13",
+    "winston": "^3.0.0-rc1"
   }
 }

@@ -4,7 +4,14 @@
   "main": "influxdb.js",
   "private": true,
   "plugin": {
-    "consumes": ["eventbus", "logger"],
+    "consumes": [
+      "eventbus",
+      "logger"
+    ],
     "provides": []
+  },
+  "dependencies": {
+    "architect": "^0.1.13",
+    "influx": "^5.0.7"
   }
 }

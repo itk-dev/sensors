@@ -5,7 +5,7 @@ Nodejs to collect sensor data.
 Install modules
 
 ```sh
-npm install
+./npm_install.sh
 ```
 
 Create a configuration file from example.config.js
@@ -24,4 +24,10 @@ node_modules/knex/bin/cli.js migrate:latest
 ## Running
 ```sh
 node app.js
+```
+
+## Upgrading modules
+
+```sh
+./npm_upgrade.sh
 ```
