@@ -20,6 +20,10 @@ module.exports = function setup (options, imports, register) {
 
         // Return event from sensor parser.
         eventBus.once(returnEvent, function (result) {
+            if (result.error) {
+                return;
+            }
+
             let dataPoints = [];
 
             // Convert data values to data points.

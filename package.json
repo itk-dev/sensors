@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node app.js",
     "debug": "DEBUG=* node app.js",
-    "test": "test"
+    "migrate": "cd plugins/database; node_modules/.bin/knex migrate:latest"
   },
   "keywords": [
     "sensors"

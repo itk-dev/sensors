@@ -18,7 +18,7 @@ Edit the config to your needs.
 Setup the database with
 
 ```sh
-node_modules/knex/bin/cli.js migrate:latest
+npm run migrate
 ```
 
 ## Running
