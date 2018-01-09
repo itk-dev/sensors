@@ -45,4 +45,36 @@ config.logger = {
 
 config.port = 3000;
 
+config.ckan = {
+    tableName: '',
+    apikey: '',
+    url: '',
+    resource: '',
+    primaryKeys: [
+        'sensor', 'sensor_id', 'timestamp'
+    ],
+    schema: [
+        {
+            'id': 'sensor',
+            'type': 'text'
+        },
+        {
+            'id': 'sensor_id',
+            'type': 'smallint'
+        },
+        {
+            'id': 'type',
+            'type': 'text'
+        },
+        {
+            'id': 'time',
+            'type': 'timestamp'
+        },
+        {
+            'id': 'val',
+            'type': 'float'
+        }
+    ]
+};
+
 module.exports = config;
