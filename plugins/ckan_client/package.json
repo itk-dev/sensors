@@ -4,7 +4,7 @@
   "main": "ckan_client.js",
   "private": true,
   "plugin": {
-    "consumes": ["eventbus"],
+    "consumes": ["eventbus", "logger"],
     "provides": []
   },
   "dependencies": {

@@ -8,7 +8,8 @@ const config = require('../../config');
 const request = require('request');
 
 module.exports = function setup (options, imports, register) {
-    let eventBus = imports.eventbus;
+    const eventBus = imports.eventbus;
+    const logger = imports.logger;
 
     // Listen for sensor.new events.
     // Parse the new sensor package and save in influxdb.
@@ -27,10 +28,10 @@ module.exports = function setup (options, imports, register) {
             let records = [];
 
             for (let key in result.values) {
-                let value = data.values[key];
+                let value = result.values[key];
 
                 let newRecord = Object.assign({}, record);
-                newRecord.val = value.value;
+                newRecord.value = value.value;
                 newRecord.sensor_id = value.sensor_id;
                 newRecord.type = value.type;
 
@@ -41,23 +42,21 @@ module.exports = function setup (options, imports, register) {
                 {
                     url: 'https://test.opendata.dk/api/action/datastore_upsert',
                     json: {
-                        resource_id: config.opendata.resources[0].resource,
-                        records: [
-                            record
-                        ], 'method': 'upsert', 'force': false
+                        resource_id: config.ckan.resource,
+                        records: records,
+                        method: 'upsert',
+                        force: false
                     },
                     headers: {
-                        'Authorization': config.opendata.apikey
+                        'Authorization': config.ckan.apikey
                     }
                 },
                 function (error, response, body) {
-                    console.log(body);
-
-                    if (!error && response.statusCode == 200) {
-                        console.log(body);
+                    if (!error && response.statusCode == 200 && body.success) {
+                        logger.info('Pushed: ' + JSON.stringify(records) + ' to CKAN.');
                     }
                     else {
-                        console.error(error);
+                        logger.error(JSON.stringify(body));
                     }
                 }
             );

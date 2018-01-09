@@ -12,10 +12,11 @@ request.post(
         url: config.ckan.url + '/api/action/datastore_create',
         json: {
             resource: {
-                package_id: 'sensordata',
+                package_id: config.ckan.packageId,
                 name: config.ckan.tableName
             },
             primary_key: config.ckan.primaryKeys,
+            indexes: config.ckan.indexes,
             fields: config.ckan.schema,
             'method': 'create',
             'force': false
@@ -25,11 +26,6 @@ request.post(
         }
     },
     function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body);
-        }
-        else {
-            console.error(error);
-        }
+        console.log(body);
     }
 );

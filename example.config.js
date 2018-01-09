@@ -46,12 +46,16 @@ config.logger = {
 config.port = 3000;
 
 config.ckan = {
+    packageId: '',
     tableName: '',
     apikey: '',
     url: '',
     resource: '',
+    indexes: [
+        'sensor', 'sensor_id', 'time', 'type'
+    ],
     primaryKeys: [
-        'sensor', 'sensor_id', 'timestamp'
+        'sensor', 'sensor_id', 'time'
     ],
     schema: [
         {
@@ -71,7 +75,7 @@ config.ckan = {
             'type': 'timestamp'
         },
         {
-            'id': 'val',
+            'id': 'value',
             'type': 'float'
         }
     ]

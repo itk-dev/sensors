@@ -16,6 +16,8 @@
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node app.js",
+    "debug": "DEBUG=* node app.js",
     "test": "test"
   },
   "keywords": [
