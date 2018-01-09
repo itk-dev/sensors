@@ -25,10 +25,8 @@ config.influxdb = {
     database: 'sensor'
 };
 
-// Hosts that are allowed to submit sensor packages.
-config.host_whitelist = [];
+config.allowed_apikeys = [];
 
-// Allowed sensors.
 config.sensor_whitelist = [
     '0004A30B001E8EA2',
     '0004A30B001E1694',

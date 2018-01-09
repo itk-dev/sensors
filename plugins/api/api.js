@@ -35,10 +35,11 @@ module.exports = function setup(options, imports, register) {
      * Add a data package to the service.
      */
     server.post('/', (req, res) => {
-        let host = req.get('host');
+        let apikey = req.query.apikey;
 
-        if (config.host_whitelist.indexOf(host) === -1) {
-            logger.info(host + ' not allowed.');
+        if (!apikey || config.allowed_apikeys.indexOf(apikey) === -1) {
+            logger.info('Apikey: ' + apikey + ' not allowed.');
+            res.status(403).send();
             return;
         }
 
