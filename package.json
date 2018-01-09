@@ -11,10 +11,13 @@
     "influx": "^5.0.7",
     "knex": "^0.14.2",
     "mariasql": "^0.2.6",
+    "request": "^2.83.0",
     "winston": "^3.0.0-rc1"
   },
   "devDependencies": {},
   "scripts": {
+    "start": "node app.js",
+    "debug": "DEBUG=* node app.js",
     "test": "test"
   },
   "keywords": [
