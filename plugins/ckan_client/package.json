@@ -1,0 +1,14 @@
+{
+  "name": "ckan_client",
+  "version": "0.0.1",
+  "main": "ckan_client.js",
+  "private": true,
+  "plugin": {
+    "consumes": ["eventbus", "logger"],
+    "provides": []
+  },
+  "dependencies": {
+    "node-cron": "^1.2.1",
+    "request": "^2.83.0"
+  }
+}

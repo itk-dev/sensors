@@ -1,0 +1,10 @@
+{
+  "name": "api",
+  "version": "0.0.1",
+  "main": "api.js",
+  "private": true,
+  "plugin": {
+    "consumes": ["eventbus", "database", "server", "logger"],
+    "provides": []
+  }
+}
