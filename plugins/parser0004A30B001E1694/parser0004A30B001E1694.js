@@ -3,10 +3,14 @@
  *
  * Sensor 0004A30B001E1694
  */
+'use strict';
 
 const Parser = require('binary-parser').Parser;
 
-module.exports = function setup(options, imports, register) {
+module.exports = function setup (options, imports, register) {
+    const eventBus = imports.eventbus;
+    const logger = imports.logger;
+
     const parser = new Parser()
         .endianess('big')
         .uint8('header_frame_counter')
@@ -18,37 +22,42 @@ module.exports = function setup(options, imports, register) {
         .uint8('water_temperature_sensor_id')
         .floatle('water_temperature_value');
 
-    let eventBus = imports.eventbus;
-
     eventBus.on('parse.0004A30B001E1694', function (data, returnEvent) {
-        'use strict';
-
         let buf = new Buffer(data, 'hex');
 
-        let result = parser.parse(buf);
+        try {
+            let result = parser.parse(buf);
 
-        let values = [];
+            let values = [];
 
-        for (let key in result) {
-            if (result.hasOwnProperty(key)) {
-                if (key.indexOf('_sensor_id') > -1) {
-                    let split = key.split('_sensor_id');
-                    let id = result[key];
+            for (let key in result) {
+                if (result.hasOwnProperty(key)) {
+                    if (key.indexOf('_sensor_id') > -1) {
+                        let split = key.split('_sensor_id');
+                        let id = result[key];
 
-                    let value = result[split[0] + '_value'];
+                        let value = result[split[0] + '_value'];
 
-                    values.push({
-                        sensor_id: id,
-                        type: split[0],
-                        value: value
-                    });
+                        values.push({
+                            sensor_id: id,
+                            type: split[0],
+                            value: value
+                        });
+                    }
                 }
             }
+
+            result.values = values;
+
+            eventBus.emit(returnEvent, result);
         }
+        catch (err) {
+            logger.error('parser0004A30B001E1694 - Could not parse: ' + data);
 
-        result.values = values;
-
-        eventBus.emit(returnEvent, result);
+            eventBus.emit(returnEvent, {
+                error: err
+            });
+        }
     });
 
     /**

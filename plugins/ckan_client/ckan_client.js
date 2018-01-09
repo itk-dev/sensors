@@ -24,6 +24,10 @@ module.exports = function setup (options, imports, register) {
 
             // Return event from sensor parser.
             eventBus.once(returnEvent, function (result) {
+                if (result.error) {
+                    return;
+                }
+
                 let record = {
                     time: new Date(data.ts).toISOString(),
                     sensor: data.EUI

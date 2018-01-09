@@ -105,6 +105,11 @@ module.exports = function setup(options, imports, register) {
                     let returnEvent = requestEvent + '-' + now;
 
                     eventBus.once(returnEvent, function (result) {
+                        if (result.error) {
+                            res.status(400).send();
+                            return;
+                        }
+
                         result.sensor_ts = data[0].sensor_ts;
                         result.sensor = data[0].sensor;
                         res.send(result);
