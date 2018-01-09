@@ -35,6 +35,14 @@ module.exports = function setup(options, imports, register) {
      * Add a data package to the service.
      */
     server.post('/', (req, res) => {
+        let apikey = req.query.apikey;
+
+        if (!apikey || config.allowed_apikeys.indexOf(apikey) === -1) {
+            logger.info('Apikey: ' + apikey + ' not allowed.');
+            res.status(403).send();
+            return;
+        }
+
         let body = req.body;
 
         // Demand that data.gws, data.data and data.seqno are set, before

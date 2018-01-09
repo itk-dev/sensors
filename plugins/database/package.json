@@ -4,7 +4,15 @@
   "main": "database.js",
   "private": true,
   "plugin": {
-    "consumes": ["logger"],
-    "provides": ["database"]
+    "consumes": [
+      "logger"
+    ],
+    "provides": [
+      "database"
+    ]
+  },
+  "dependencies": {
+    "knex": "^0.14.2",
+    "mariasql": "^0.2.6"
   }
 }

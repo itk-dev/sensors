@@ -9,6 +9,8 @@
 
 let config = {};
 
+config.port = 3000;
+
 config.database_client = 'mariasql';
 
 config.database_connection = {
@@ -23,10 +25,7 @@ config.influxdb = {
     database: 'sensor'
 };
 
-// @TODO
-config.sensor_server_whitelist = [
-
-];
+config.allowed_apikeys = [];
 
 config.sensor_whitelist = [
     '0004A30B001E8EA2',
@@ -43,8 +42,7 @@ config.logger = {
     }
 };
 
-config.port = 3000;
-
+// Configure CKAN.
 config.ckan = {
     packageId: '',
     tableName: '',

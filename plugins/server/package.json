@@ -4,7 +4,16 @@
   "main": "server.js",
   "private": true,
   "plugin": {
-    "consumes": ["eventbus", "logger"],
-    "provides": ["server"]
+    "consumes": [
+      "eventbus",
+      "logger"
+    ],
+    "provides": [
+      "server"
+    ]
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
   }
 }
