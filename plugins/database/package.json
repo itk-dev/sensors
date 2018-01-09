@@ -12,7 +12,6 @@
     ]
   },
   "dependencies": {
-    "architect": "^0.1.13",
     "knex": "^0.14.2",
     "mariasql": "^0.2.6"
   }

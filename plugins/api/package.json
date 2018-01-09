@@ -12,7 +12,5 @@
     ],
     "provides": []
   },
-  "dependencies": {
-    "architect": "^0.1.13"
-  }
+  "dependencies": {}
 }

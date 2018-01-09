@@ -35,6 +35,13 @@ module.exports = function setup(options, imports, register) {
      * Add a data package to the service.
      */
     server.post('/', (req, res) => {
+        let host = req.get('host');
+
+        if (config.host_whitelist.indexOf(host) === -1) {
+            logger.info(host + ' not allowed.');
+            return;
+        }
+
         let body = req.body;
 
         // Demand that data.gws, data.data and data.seqno are set, before
