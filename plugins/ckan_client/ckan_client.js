@@ -52,7 +52,7 @@ module.exports = function setup (options, imports, register) {
                             resource_id: config.ckan.resource,
                             records: records,
                             method: 'insert',
-                            force: true
+                            force: config.ckan.force
                         },
                         headers: {
                             'Authorization': config.ckan.apikey
