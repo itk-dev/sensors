@@ -49,6 +49,7 @@ config.ckan = {
     apikey: '',
     url: '',
     resource: '',
+    force: false,
     indexes: [
         'sensor', 'sensor_id', 'time', 'type'
     ],
