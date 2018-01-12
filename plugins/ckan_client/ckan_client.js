@@ -51,7 +51,7 @@ module.exports = function setup (options, imports, register) {
                         json: {
                             resource_id: config.ckan.resource,
                             records: records,
-                            method: 'upsert',
+                            method: 'insert',
                             force: false
                         },
                         headers: {
