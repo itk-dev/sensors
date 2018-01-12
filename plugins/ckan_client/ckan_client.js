@@ -47,7 +47,7 @@ module.exports = function setup (options, imports, register) {
 
                 request.post(
                     {
-                        url: 'https://test.opendata.dk/api/action/datastore_upsert',
+                        url: config.ckan.url + '/api/action/datastore_upsert',
                         json: {
                             resource_id: config.ckan.resource,
                             records: records,
