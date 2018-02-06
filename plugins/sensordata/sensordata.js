@@ -133,10 +133,12 @@ module.exports = function setup (options, imports, register) {
                 }
             }
 
-            res.json(response).send();
+            res.json(response);
         }).catch(err => {
-            logger.error(err);
+            logger.error(err.stack);
             res.status(500).send();
+        }).then(() => {
+            res.end();
         });
     });
 
