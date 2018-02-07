@@ -141,6 +141,25 @@ module.exports = function setup (options, imports, register) {
         }
     };
 
+    const processQueryResult = (result, request, type, location) => {
+        let res = {
+            sensor: request[0],
+            name: type.title,
+            unit: type.unit,
+            location: location,
+            icon_classes: type.icon_classes,
+            count_up: type.count_up,
+            timestamp: result.time.toISOString(),
+            value: result.value
+        };
+
+        if (type.hasOwnProperty('conversion')) {
+            res = type.conversion(res);
+        }
+
+        return res;
+    };
+
     /**
      * GET: /api/sensordata/citylab
      */
@@ -159,42 +178,35 @@ module.exports = function setup (options, imports, register) {
 
         for (let sensorParameter of queryParameters) {
             let sensorPair = sensorParameter.split(',');
-
-            requests.push(sensorPair);
-
             let type = Influx.escape.measurement(sensorPair[1]);
             let sensor = Influx.escape.tag(sensorPair[0]);
-
             let query = `select * from "${type}" where "sensor" = '${sensor}' order by time desc limit 1`;
 
+            requests.push(sensorPair);
             queries.push(query);
         }
 
         influxdb.query(queries).then(influxResults => {
             let response = [];
 
-            for (let i = 0; i < influxResults.length; i++) {
-                for (let j = 0; j < influxResults[i].length; j++) {
-                    let result = influxResults[i][j];
-                    let request = requests[i];
+            if (queries.length > 1) {
+                for (let i = 0; i < influxResults.length; i++) {
+                    for (let j = 0; j < influxResults[i].length; j++) {
+                        let result = influxResults[i][j];
+                        let request = requests[i];
+                        let type = types[request[1]];
+
+                        response.push(processQueryResult(result, request, type, location));
+                    }
+                }
+            }
+            else {
+                for (let i = 0; i < influxResults.length; i++) {
+                    let result = influxResults[i];
+                    let request = requests[0];
                     let type = types[request[1]];
 
-                    let res = {
-                        sensor: request[0],
-                        name: type.title,
-                        unit: type.unit,
-                        location: location,
-                        icon_classes: type.icon_classes,
-                        count_up: type.count_up,
-                        timestamp: result.time.toISOString(),
-                        value: result.value
-                    };
-
-                    if (type.hasOwnProperty('conversion')) {
-                        res = type.conversion(res);
-                    }
-
-                    response.push(res);
+                    response.push(processQueryResult(result, request, type, location));
                 }
             }
 
