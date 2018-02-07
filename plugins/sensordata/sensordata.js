@@ -11,6 +11,136 @@ module.exports = function setup (options, imports, register) {
     const logger = imports.logger;
     const influxdb = imports.influxdb;
 
+
+    const conversionFloor = (result) => {
+        result.value = Math.floor(result.value);
+        return result;
+    };
+
+    const conversionTemperature = (result) => {
+        result.value = Math.floor(result.value);
+
+        if (result.value <= 0) {
+            result.icon_classes = 'fas fa-thermometer-empty';
+        }
+        else if (result.value > 0 && result.value <= 10) {
+            result.icon_classes = 'fas fa-thermometer-quarter';
+        }
+        else if (result.value > 10 && result.value <= 20) {
+            result.icon_classes = 'fas fa-thermometer-half';
+        }
+        else if (result.value > 20 && result.value <= 30) {
+            result.icon_classes = 'fas fa-thermometer-half';
+        }
+        else {
+            result.icon_classes = 'fas fa-thermometer-full';
+        }
+
+        return result;
+    };
+
+    const conversionPressure = (result) => {
+        result.value = Math.floor(result.value * .01);
+        return result;
+    };
+
+    const conversionWindVane = (result) => {
+        let values = ['V','VSV','SV','SSV','S','SSØ','SØ','ØSØ','Ø','ØNØ','NØ','NNØ','N','NNV','NV','VNV'];
+
+        result.icon_rotate = result.icon_classes + ' rotate-' + Math.floor(-29 - 90 - result.value * 22.5);
+
+        result.value = values[result.value];
+        return result;
+    };
+
+    const conversionDistanceToWater = (result) => {
+        result.value = Math.floor(result.value - 196);
+        return result;
+    };
+
+    const types = {
+        battery: {
+            title: 'Batteri',
+            count_up: true,
+            icon_classes: 'fas fa-battery-three-quarters',
+            unit: '%'
+        },
+        charging_power: {
+            title: 'Ladestrøm',
+            count_up: true,
+            icon_classes: 'fas fa-bolt',
+            unit: 'mA'
+        },
+        air_temperature: {
+            title: 'Lufttemperatur',
+            count_up: true,
+            icon_classes: 'fas fa-thermometer-half',
+            conversion: conversionTemperature,
+            unit: '°C'
+        },
+        water_temperature: {
+            title: 'Vandtemperatur',
+            count_up: true,
+            icon_classes: 'fas fa-thermometer-half',
+            conversion: conversionTemperature,
+            unit: '°C'
+        },
+        humidity: {
+            title: 'Luftfugtighed',
+            count_up: true,
+            icon_classes: 'fas fa-tint',
+            conversion: conversionFloor,
+            unit: '%'
+        },
+        pressure: {
+            title: 'Lufttryk',
+            count_up: true,
+            icon_classes: 'fas fa-tachometer-alt',
+            conversion: conversionPressure,
+            unit: 'mBar'
+        },
+        distance_to_water: {
+            title: 'Vandstand',
+            count_up: true,
+            icon_classes: 'fas fa-arrows-v ',
+            conversion: conversionDistanceToWater,
+            unit: 'cm'
+        },
+        wind_vane: {
+            title: 'Vindretning',
+            count_up: false,
+            conversion: conversionWindVane,
+            icon_classes: 'fas fa-compass'
+        },
+        wind_speed: {
+            title: 'Vindhastighed',
+            count_up: true,
+            unit: 'km/h',
+            conversion: conversionFloor,
+            icon_classes: 'far fa-flag'
+        },
+        rain: {
+            title: 'Regn',
+            count_up: true,
+            unit: 'mm/h',
+            conversion: conversionFloor,
+            icon_classes: 'fas fa-tint'
+        },
+        solar_radiation: {
+            title: 'Solstråling',
+            count_up: true,
+            // @TODO
+            unit: '',
+            icon_classes: 'fas fa-sun'
+        },
+        lux: {
+            title: 'Dagslys',
+            count_up: true,
+            unit: 'Lux',
+            icon_classes: 'far fa-sun'
+        }
+    };
+
     /**
      * GET: /api/sensordata/citylab
      */
@@ -20,76 +150,6 @@ module.exports = function setup (options, imports, register) {
         let queryParameters = req.query.sensor;
 
         const location = 'citylab';
-
-        const types = {
-            battery: {
-                title: 'Batteri',
-                fa_icon: 'battery-three-quarters',
-                unit: '%'
-            },
-            charging_power: {
-                title: 'Ladestrøm',
-                fa_icon: 'bolt',
-                unit: 'mA'
-            },
-            air_temperature: {
-                title: 'Lufttemperatur',
-                fa_icon: 'thermometer-half',
-                unit: '°C'
-            },
-            water_temperature: {
-                title: 'Vandtemperatur',
-                fa_icon: 'thermometer-half',
-                unit: '°C'
-            },
-            humidity: {
-                title: 'Luftfugtighed',
-                fa_icon: 'tint',
-                unit: '%'
-            },
-            pressure: {
-                title: 'Lufttryk',
-                fa_icon: 'tachometer-alt',
-                conversion: function (val) {
-                    return val * .01;
-                },
-                unit: 'mBar'
-            },
-            distance_to_water: {
-                title: 'Vandstand',
-                fa_icon: 'arrows-v',
-                unit: 'cm'
-            },
-            wind_vane: {
-                title: 'Vindretning',
-                conversion: function (val) {
-                    let values = ['W','WSW','SW','SSW','S','SSE','SE','ESE','E','ENE','NE','NNE','N','NNW','NW','WNW'];
-                    return values[val];
-                },
-                fa_icon: 'compass'
-            },
-            wind_speed: {
-                title: 'Vindhastighed',
-                unit: 'km/h',
-                fa_icon: 'pennant'
-            },
-            rain: {
-                title: 'Regn',
-                unit: 'mm/h',
-                fa_icon: 'tint'
-            },
-            solar_radiation: {
-                title: 'Solstråling',
-                // @TODO
-                unit: '',
-                fa_icon: 'sun'
-            },
-            lux: {
-                title: 'Dagslys',
-                unit: 'Lux',
-                fa_icon: 'sun'
-            }
-        };
 
         if (!Array.isArray(queryParameters)) {
             queryParameters = [queryParameters];
@@ -124,10 +184,15 @@ module.exports = function setup (options, imports, register) {
                         name: type.title,
                         unit: type.unit,
                         location: location,
-                        fa_icon: type.fa_icon,
+                        icon_classes: type.icon_classes,
+                        count_up: type.count_up,
                         timestamp: result.time.toISOString(),
-                        value: type.hasOwnProperty('conversion') ? type.conversion(result.value) : result.value
+                        value: result.value
                     };
+
+                    if (type.hasOwnProperty('conversion')) {
+                        res = type.conversion(res);
+                    }
 
                     response.push(res);
                 }
