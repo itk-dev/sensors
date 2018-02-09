@@ -166,6 +166,12 @@ module.exports = function setup (options, imports, register) {
     server.get('/api/sensordata/citylab', (req, res) => {
         let queries = [];
 
+        if (!req.query.hasOwnProperty('sensor')) {
+            logger.info('No sensor parameter. Ignoring.');
+            res.status(404).send('No sensor selected');
+            return;
+        }
+
         let queryParameters = req.query.sensor;
 
         const location = 'citylab';
