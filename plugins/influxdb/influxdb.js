@@ -54,5 +54,7 @@ module.exports = function setup (options, imports, register) {
     /**
      * Register with architect.
      */
-    register(null, {});
+    register(null, {
+        influxdb: influx
+    });
 };
