@@ -185,8 +185,15 @@ module.exports = function setup (options, imports, register) {
         for (let sensorParameter of queryParameters) {
             let sensorPair = sensorParameter.split(',');
             let type = Influx.escape.measurement(sensorPair[1]);
-            let sensor = Influx.escape.tag(sensorPair[0]);
-            let query = `select * from "${type}" where "sensor" = '${sensor}' order by time desc limit 1`;
+            let sensor = Influx.escape.stringLit(sensorPair[0]);
+
+            // Reject injection attempts.
+            if (type.match(/'/) || type.match(/"/) || sensor.match(/'/) || sensor.match(/"/)) {
+                res.status(400).send();
+                return;
+            }
+
+            let query = `select * from "${type}" where "sensor" = ${sensor} order by time desc limit 1`;
 
             requests.push(sensorPair);
             queries.push(query);
