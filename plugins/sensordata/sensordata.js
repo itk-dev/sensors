@@ -187,8 +187,8 @@ module.exports = function setup (options, imports, register) {
             let type = Influx.escape.measurement(sensorPair[1]);
             let sensor = Influx.escape.stringLit(sensorPair[0]);
 
-            // Reject injection attempts.
-            if (type.match(/'/) || type.match(/"/) || sensor.match(/'/) || sensor.match(/"/)) {
+            if (type.match(/'/) || type.match(/"/) || sensor.match(/"/)) {
+                logger.error('Ignoring request');
                 res.status(400).send();
                 return;
             }
