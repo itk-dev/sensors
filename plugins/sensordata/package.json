@@ -1,16 +1,16 @@
 {
-  "name": "influxdb",
+  "name": "sensorsdata",
   "version": "0.0.1",
-  "main": "influxdb.js",
+  "main": "sensordata.js",
   "private": true,
   "plugin": {
     "consumes": [
       "eventbus",
-      "logger"
-    ],
-    "provides": [
+      "server",
+      "logger",
       "influxdb"
-    ]
+    ],
+    "provides": []
   },
   "dependencies": {
     "influx": "^5.0.7"
