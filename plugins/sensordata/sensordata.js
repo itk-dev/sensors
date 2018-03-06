@@ -1,6 +1,6 @@
 /**
  * @file
- * Api module. Provides API for sensor packages.
+ * Sensordata module. Provides API for getting sensor data.
  */
 'use strict';
 
@@ -11,12 +11,23 @@ module.exports = function setup (options, imports, register) {
     const logger = imports.logger;
     const influxdb = imports.influxdb;
 
-
+    /**
+     * Conversion where result is floored.
+     *
+     * @param result
+     * @return {*}
+     */
     const conversionFloor = (result) => {
         result.value = Math.floor(result.value);
         return result;
     };
 
+    /**
+     * Conversion for temperature.
+     *
+     * @param result
+     * @return {*}
+     */
     const conversionTemperature = (result) => {
         result.value = Math.floor(result.value);
 
@@ -39,11 +50,27 @@ module.exports = function setup (options, imports, register) {
         return result;
     };
 
+    /**
+     * Conversion for pressure.
+     *
+     * Converts from Pascal to mBar.
+     *
+     * @param result
+     * @return {*}
+     */
     const conversionPressure = (result) => {
         result.value = Math.floor(result.value * .01);
         return result;
     };
 
+    /**
+     * Conversion for wind vane.
+     *
+     * Converts values to directions.
+     *
+     * @param result
+     * @return {*}
+     */
     const conversionWindVane = (result) => {
         let values = ['V','VSV','SV','SSV','S','SSØ','SØ','ØSØ','Ø','ØNØ','NØ','NNØ','N','NNV','NV','VNV'];
 
@@ -53,11 +80,32 @@ module.exports = function setup (options, imports, register) {
         return result;
     };
 
+    /**
+     * Conversion for distance to water.
+     *
+     * Converts to difference from normal water level.
+     *
+     * @param result
+     * @return {*}
+     */
     const conversionDistanceToWater = (result) => {
         result.value = Math.floor(result.value - 196);
         return result;
     };
 
+    /**
+     * Convertion for wind speed.
+     *
+     * Converts from km/h to m/s.
+     *
+     * @param result
+     */
+    const conversionWindSpeed = (result) => {
+        result.value = Math.floor(result.value / 3.6);
+        result.unit = 'm/s';
+    };
+
+    // Array of standard values for the different sensors.
     const types = {
         battery: {
             title: 'Batteri',
@@ -116,7 +164,7 @@ module.exports = function setup (options, imports, register) {
             title: 'Vindhastighed',
             count_up: true,
             unit: 'km/h',
-            conversion: conversionFloor,
+            conversion: conversionWindSpeed,
             icon_classes: 'far fa-flag'
         },
         rain: {
@@ -141,6 +189,15 @@ module.exports = function setup (options, imports, register) {
         }
     };
 
+    /**
+     * Creates result.
+     *
+     * @param result
+     * @param request
+     * @param type
+     * @param location
+     * @return Object
+     */
     const processQueryResult = (result, request, type, location) => {
         let res = {
             sensor: request[0],
@@ -162,6 +219,8 @@ module.exports = function setup (options, imports, register) {
 
     /**
      * GET: /api/sensordata/citylab
+     *
+     * Example: /api/sensordata/citylab?sensor=[SENSOR_ID],[TYPE]&sensor=[SENSOR_ID],[TYPE]
      */
     server.get('/api/sensordata/citylab', (req, res) => {
         let queries = [];
