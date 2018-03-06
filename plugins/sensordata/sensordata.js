@@ -89,7 +89,7 @@ module.exports = function setup (options, imports, register) {
      * @return {*}
      */
     const conversionDistanceToWater = (result) => {
-        result.value = Math.floor(result.value - 196);
+        result.value = Math.floor(-1 * (result.value - 196));
         return result;
     };
 
@@ -148,7 +148,7 @@ module.exports = function setup (options, imports, register) {
             unit: 'mBar'
         },
         distance_to_water: {
-            title: 'Vandstand',
+            title: 'Afvigelse fra normalvandstanden',
             count_up: true,
             icon_classes: 'fas fa-arrows-v ',
             conversion: conversionDistanceToWater,
