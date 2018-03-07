@@ -5,6 +5,7 @@
 'use strict';
 
 const Influx = require('influx');
+const Q = require('q');
 
 module.exports = function setup (options, imports, register) {
     const server = imports.server;
@@ -72,7 +73,7 @@ module.exports = function setup (options, imports, register) {
      * @return {*}
      */
     const conversionWindVane = (result) => {
-        let values = ['V','VSV','SV','SSV','S','SSØ','SØ','ØSØ','Ø','ØNØ','NØ','NNØ','N','NNV','NV','VNV'];
+        let values = ['V', 'VSV', 'SV', 'SSV', 'S', 'SSØ', 'SØ', 'ØSØ', 'Ø', 'ØNØ', 'NØ', 'NNØ', 'N', 'NNV', 'NV', 'VNV'];
 
         result.icon_rotate = result.icon_classes + ' rotate-' + Math.floor(-29 - 90 - result.value * 22.5);
 
@@ -186,6 +187,12 @@ module.exports = function setup (options, imports, register) {
             count_up: true,
             unit: 'Lux',
             icon_classes: 'far fa-sun'
+        },
+        windchillfactor: {
+            title: 'Kuldeindeks',
+            count_up: true,
+            unit: '',
+            icon_classes: 'far fa-snowflake'
         }
     };
 
@@ -198,9 +205,9 @@ module.exports = function setup (options, imports, register) {
      * @param location
      * @return Object
      */
-    const processQueryResult = (result, request, type, location) => {
+    const processQueryResult = (result, sensor, type, location) => {
         let res = {
-            sensor: request[0],
+            sensor: sensor,
             name: type.title,
             unit: type.unit,
             location: location,
@@ -218,13 +225,94 @@ module.exports = function setup (options, imports, register) {
     };
 
     /**
+     * Gets the value of one type from a sensor.
+     *
+     * @param sensor
+     * @param type
+     * @return {*}
+     */
+    const getSensorValue = (sensor, type) => {
+        let deferred = Q.defer();
+
+        let query = `select * from "${type}" where "sensor" = '${sensor}' order by time desc limit 1`;
+
+        let sensorType = types[type];
+
+        influxdb.query(query).then(influxResults => {
+            deferred.resolve(processQueryResult(influxResults[0], sensor, sensorType, 'citylab'));
+        }).catch(err => {
+            deferred.reject(err);
+        });
+
+        return deferred.promise;
+    };
+
+    /**
+     * Get wind chill factor from sensor.
+     *
+     * @param sensor
+     * @param type
+     * @return {*}
+     */
+    const getWindChillFactor = (sensor, type) => {
+        let deferred = Q.defer();
+        let queries = [];
+        queries.push(`select * from "air_temperature" where "sensor" = '${sensor}' order by time desc limit 1`);
+        queries.push(`select * from "wind_speed" where "sensor" = '${sensor}' order by time desc limit 1`);
+
+        influxdb.query(queries).then(influxResults => {
+            if (influxResults.length !== 2 || influxResults[0].length !== 1 || influxResults[1].length !== 1) {
+                deferred.reject();
+                return;
+            }
+
+            let t = influxResults[0][0].value;
+            // Convert from km/h to m/s.
+            let u = influxResults[1][0].value / 3.6;
+            // Default to temperature.
+            let windChillFactor = t;
+
+            // Only valid if temperature is less than 10 °C, and the wind is greater than 1.3 m/s.
+            if (t < 10 && u > 1.3) {
+                windChillFactor = 13.12 + 0.6215 * t - 11.37 * Math.pow(u * 3.6, 0.16) + 0.3965 * t * Math.pow(u * 3.6, 0.16);
+            }
+
+            let type = types['windchillfactor'];
+
+            let result = {
+                sensor: sensor,
+                name: type.title,
+                unit: type.unit,
+                location: 'citylab',
+                icon_classes: type.icon_classes,
+                count_up: type.count_up,
+                timestamp: new Date().toISOString(),
+                value: Math.floor(windChillFactor)
+            };
+
+            deferred.resolve(result);
+        }).catch(err => {
+            deferred.reject(err);
+        });
+
+        return deferred.promise;
+    };
+
+    /**
+     * Custom sensor functions should be registered here.
+     *
+     * @type {{windchillfactor: (function(*=, *))}}
+     */
+    const customFunctions = {
+        windchillfactor: getWindChillFactor
+    };
+
+    /**
      * GET: /api/sensordata/citylab
      *
      * Example: /api/sensordata/citylab?sensor=[SENSOR_ID],[TYPE]&sensor=[SENSOR_ID],[TYPE]
      */
     server.get('/api/sensordata/citylab', (req, res) => {
-        let queries = [];
-
         if (!req.query.hasOwnProperty('sensor')) {
             logger.info('No sensor parameter. Ignoring.');
             res.status(404).send('No sensor selected');
@@ -233,62 +321,43 @@ module.exports = function setup (options, imports, register) {
 
         let queryParameters = req.query.sensor;
 
-        const location = 'citylab';
-
         if (!Array.isArray(queryParameters)) {
             queryParameters = [queryParameters];
         }
 
-        let requests = [];
+        let promises = [];
 
         for (let sensorParameter of queryParameters) {
             let sensorPair = sensorParameter.split(',');
-            let type = Influx.escape.measurement(sensorPair[1]);
-            let sensor = Influx.escape.stringLit(sensorPair[0]);
+            let type = Influx.escape.measurement(sensorPair[1]).replace('\'', '');
+            let sensor = Influx.escape.measurement(sensorPair[0]).replace('\'', '');
 
-            if (type.match(/'/) || type.match(/"/) || sensor.match(/"/)) {
+            if (type.match(/'/) || type.match(/"/) || sensor.match(/'/) || sensor.match(/"/)) {
                 logger.error('Ignoring request');
                 res.status(400).send();
                 return;
             }
 
-            let query = `select * from "${type}" where "sensor" = ${sensor} order by time desc limit 1`;
-
-            requests.push(sensorPair);
-            queries.push(query);
-        }
-
-        influxdb.query(queries).then(influxResults => {
-            let response = [];
-
-            if (queries.length > 1) {
-                for (let i = 0; i < influxResults.length; i++) {
-                    for (let j = 0; j < influxResults[i].length; j++) {
-                        let result = influxResults[i][j];
-                        let request = requests[i];
-                        let type = types[request[1]];
-
-                        response.push(processQueryResult(result, request, type, location));
-                    }
-                }
+            if (customFunctions.hasOwnProperty(type)) {
+                promises.push(customFunctions[type](sensor, type));
             }
             else {
-                for (let i = 0; i < influxResults.length; i++) {
-                    let result = influxResults[i];
-                    let request = requests[0];
-                    let type = types[request[1]];
-
-                    response.push(processQueryResult(result, request, type, location));
-                }
+                promises.push(getSensorValue(sensor, type));
             }
+        }
 
-            res.json(response);
-        }).catch(err => {
-            logger.error(err.stack);
-            res.status(500).send();
-        }).then(() => {
-            res.end();
-        });
+        Q.allSettled(promises)
+            .then(function (results) {
+                let response = [];
+
+                results.forEach(function (result) {
+                    if (result.state === 'fulfilled') {
+                        response.push(result.value);
+                    }
+                });
+
+                res.json(response);
+            });
     });
 
     /**
