@@ -20,6 +20,7 @@ module.exports = function setup (options, imports, register) {
      */
     const conversionFloor = (result) => {
         result.value = Math.floor(result.value);
+
         return result;
     };
 
@@ -42,7 +43,7 @@ module.exports = function setup (options, imports, register) {
             result.icon_classes = 'fas fa-thermometer-half';
         }
         else if (result.value > 20 && result.value <= 30) {
-            result.icon_classes = 'fas fa-thermometer-half';
+            result.icon_classes = 'fas fa-thermometer-three-quarters';
         }
         else {
             result.icon_classes = 'fas fa-thermometer-full';
@@ -61,6 +62,7 @@ module.exports = function setup (options, imports, register) {
      */
     const conversionPressure = (result) => {
         result.value = Math.floor(result.value * .01);
+
         return result;
     };
 
@@ -76,8 +78,8 @@ module.exports = function setup (options, imports, register) {
         let values = ['V', 'VSV', 'SV', 'SSV', 'S', 'SSØ', 'SØ', 'ØSØ', 'Ø', 'ØNØ', 'NØ', 'NNØ', 'N', 'NNV', 'NV', 'VNV'];
 
         result.icon_rotate = result.icon_classes + ' rotate-' + Math.floor(-29 - 90 - result.value * 22.5);
-
         result.value = values[result.value];
+
         return result;
     };
 
@@ -91,6 +93,7 @@ module.exports = function setup (options, imports, register) {
      */
     const conversionDistanceToWater = (result) => {
         result.value = Math.floor(-1 * (result.value - 196));
+
         return result;
     };
 
@@ -104,6 +107,8 @@ module.exports = function setup (options, imports, register) {
     const conversionWindSpeed = (result) => {
         result.value = Math.floor(result.value / 3.6);
         result.unit = 'm/s';
+
+        return result;
     };
 
     // Array of standard values for the different sensors.
@@ -200,7 +205,7 @@ module.exports = function setup (options, imports, register) {
      * Creates result.
      *
      * @param result
-     * @param request
+     * @param sensor
      * @param type
      * @param location
      * @return Object
