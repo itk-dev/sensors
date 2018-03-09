@@ -4,23 +4,31 @@
  */
 'use strict';
 
-const winston = require('winston');
 const config = require('../../config');
+const { createLogger, format, transports } = require('winston');
+const { combine, timestamp, printf } = format;
 
 module.exports = function setup(options, imports, register) {
-    const logger = winston.createLogger({
+    const myFormat = printf(info => {
+        return `${info.timestamp} ${info.level}: ${info.message}`;
+    });
+
+    const logger = createLogger({
         level: config.logger.level,
-        format: winston.format.json(),
+        format: combine(
+            timestamp(),
+            myFormat
+        ),
         transports: [
-            new winston.transports.File({ filename: config.logger.files.error, level: 'error' }),
-            new winston.transports.File({ filename: config.logger.files.info })
+            new transports.File({ filename: config.logger.files.error, level: 'error' }),
+            new transports.File({ filename: config.logger.files.info })
         ]
     });
 
     // To console if enabled.
     if (config.logger.console) {
-        logger.add(new winston.transports.Console({
-            format: winston.format.simple()
+        logger.add(new transports.Console({
+            format: format.simple()
         }));
     }
 
