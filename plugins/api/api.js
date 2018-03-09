@@ -50,7 +50,7 @@ module.exports = function setup (options, imports, register) {
         if (body.hasOwnProperty('EUI') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno') && body.hasOwnProperty('ts')) {
             // Check if the sensor is allowed access.
             if (config.sensor_whitelist.indexOf(body.EUI) === -1) {
-                logger.warn('Sensor not whitelisted or has no EUI');
+                logger.warn('Sensor not whitelisted or has no EUI', req.body);
                 res.status(401).send();
                 return;
             }
@@ -70,7 +70,7 @@ module.exports = function setup (options, imports, register) {
                             res.status(201).send();
                         }
                         else {
-                            logger.info('Duplicate entry.');
+                            logger.info('Duplicate entry.', req.body);
                             res.status(200).send('Duplicate entry.');
                         }
                     })
@@ -81,12 +81,12 @@ module.exports = function setup (options, imports, register) {
             }
             else {
                 // Ignoring packages without gws entries.
-                logger.info('Entry without gws entry. Ignoring.');
+                logger.info('Entry without gws entry. Ignoring.', req.body);
                 res.status(200).send('Entry without gws entry. Ignoring.');
             }
         }
         else {
-            logger.warn('Package does not have required fields: EUI, data, seqno, ts');
+            logger.warn('Package does not have required fields: EUI, data, seqno, ts', req.body);
             res.status(400).send();
         }
     });
