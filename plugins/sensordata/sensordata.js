@@ -196,7 +196,7 @@ module.exports = function setup (options, imports, register) {
         windchillfactor: {
             title: 'Kuldeindeks',
             count_up: true,
-            unit: '',
+            unit: '°C',
             icon_classes: 'far fa-snowflake'
         }
     };
