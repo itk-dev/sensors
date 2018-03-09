@@ -6,7 +6,7 @@
 
 const config = require('./../../config');
 
-module.exports = function setup(options, imports, register) {
+module.exports = function setup (options, imports, register) {
     const eventBus = imports.eventbus;
     const database = imports.database;
     const server = imports.server;
@@ -47,30 +47,46 @@ module.exports = function setup(options, imports, register) {
 
         // Demand that data.gws, data.data and data.seqno are set, before
         // adding to the sensor table.
-        if (body.hasOwnProperty('EUI') && body.hasOwnProperty('gws') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno') && body.hasOwnProperty('ts')) {
+        if (body.hasOwnProperty('EUI') && body.hasOwnProperty('data') && body.hasOwnProperty('seqno') && body.hasOwnProperty('ts')) {
             // Check if the sensor is allowed access.
-            if (body.hasOwnProperty('EUI') && config.sensor_whitelist.indexOf(body.EUI) === -1) {
+            if (config.sensor_whitelist.indexOf(body.EUI) === -1) {
                 logger.warn('Sensor not whitelisted or has no EUI');
-                res.status(400).send();
+                res.status(401).send();
                 return;
             }
 
-            // Check that the sensor package has not already been added.
-            database.getSensorPackage(body.EUI, body.seqno, body.ts).then((rows) => {
-                // Avoid duplicate entry.
-                if (rows.length === 0) {
-                    // Save to the database.
-                    database.addSensorPackage(body.EUI, body.seqno, body.ts, body.data, JSON.stringify(body));
-                }
+            if (body.hasOwnProperty('gws')) {
+                // Check that the sensor package has not already been added.
+                database.getSensorPackage(body.EUI, body.seqno, body.ts)
+                    .then((rows) => {
+                        // Avoid duplicate entry.
+                        if (rows.length === 0) {
+                            // Save to the database.
+                            database.addSensorPackage(body.EUI, body.seqno, body.ts, body.data, JSON.stringify(body));
 
-                // Emit event that new sensor package has been added.
-                eventBus.emit('sensor.new', body);
-            });
+                            // Emit event that new sensor package has been added.
+                            eventBus.emit('sensor.new', body);
 
-            res.status(201).send();
+                            res.status(201).send();
+                        }
+                        else {
+                            logger.info('Duplicate entry.');
+                            res.status(200).send('Duplicate entry.');
+                        }
+                    })
+                    .catch((err) => {
+                        logger.error(err);
+                        res.status(500).send();
+                    });
+            }
+            else {
+                // Ignoring packages without gws entries.
+                logger.info('Entry without gws entry. Ignoring.');
+                res.status(200).send('Entry without gws entry. Ignoring.');
+            }
         }
         else {
-            logger.warn('Package does not have required fields: EUI, gws, data, seqno, ts');
+            logger.warn('Package does not have required fields: EUI, data, seqno, ts');
             res.status(400).send();
         }
     });
