@@ -86,8 +86,8 @@ module.exports = function setup (options, imports, register) {
             }
         }
         else {
-            logger.warn('Package does not have required fields: EUI, data, seqno, ts. ' + JSON.stringify(body));
-            res.status(400).send();
+            logger.warn('Package does not have required fields: EUI, data, seqno, ts. Ignoring. ' + JSON.stringify(body));
+            res.status(200).send('Package does not have required fields: EUI, data, seqno, ts. Ignoring.');
         }
     });
 
