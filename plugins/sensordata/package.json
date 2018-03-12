@@ -13,6 +13,7 @@
     "provides": []
   },
   "dependencies": {
-    "influx": "^5.0.7"
+    "influx": "^5.0.7",
+    "q": "^1.5.1"
   }
 }
