@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.3
+
+* Minor changes to sensordata API calls.
+
 ## 1.1.2
 
 * Added ignore for packages that do not have the correct data.
