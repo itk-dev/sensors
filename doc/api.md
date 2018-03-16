@@ -6,6 +6,8 @@ Latest (recent) sensor packages: [`/api/sensorpackage/recent`](http://127.0.0.1:
 
 Latest (recent) data from a sensor: [`/api/recent?sensor=sensor-id`](http://127.0.0.1:3000/api/recent?sensor=0004A30B001E8EA2)
 
+Data for os2display templates: [`/api/sensordata/citylab?sensor=[sensor_id],[type]`](http://127.0.0.1:3000/api/sensordata/citylab?sensor=0004A30B001E8EA2,battery)
+
 Sending sensor data: `/?apikey=api-key` (see [Sending sensor data](#sending-sensor-data))
 
 
@@ -23,7 +25,7 @@ config.allowed_apikeys = [
 ];
 ```
 
-and white list a sensor:
+and whitelist a sensor:
 
 ```js
 config.sensor_whitelist = [
@@ -105,4 +107,32 @@ The response status code will be `201 Created` on success. If not
 successful, check the log files in `logs/` for details on what is
 wrong.
 
-Open [`/api/recent?sensor=0004A30B001E8EA2`](http://127.0.0.1:3000/api/recent?sensor=0004A30B001E8EA2) to see the [parsed sensor data](parsers.md).
+## API
+
+### GET: /api/recent?sensor=[sensor_id]
+
+Open [`/api/recent?sensor=0004A30B001E8EA2`](http://127.0.0.1:3000/api/recent?sensor=0004A30B001E8EA2) to see the lastest [parsed sensor data](parsers.md).
+
+### GET: /api/sensordata/citylab?sensor=[sensor_id],[type]
+
+Get results formatted for use in os2display.
+
+eg. /api/sensordata/citylab?sensor=0004A30B001E307C,air_temperature&sensor=0004A30B001E8EA2,windchillfactor
+
+Current available types:
+
+* battery
+* charging_power
+* air_temperature
+* water_temperature
+* humidity
+* pressure
+* distance_to_water
+* wind_vane
+* wind_speed
+* rain
+* solar_radiation
+* lux
+* windchillfactor
+
+If a result is not available (eg. if the type is not available for a sensor) it will not be included.
