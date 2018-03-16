@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.4
+
+* Updated documentation.
+
 ## 1.1.3
 
 * Minor changes to sensordata API calls.
