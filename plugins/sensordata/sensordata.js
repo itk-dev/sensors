@@ -154,9 +154,9 @@ module.exports = function setup (options, imports, register) {
             unit: 'mBar'
         },
         distance_to_water: {
-            title: 'Afvigelse fra normalvandstanden',
+            title: 'Vandstand',
             count_up: true,
-            icon_classes: 'fas fa-arrows-v ',
+            icon_classes: 'fas fa-arrows-alt-v',
             conversion: conversionDistanceToWater,
             unit: 'cm'
         },
@@ -183,8 +183,7 @@ module.exports = function setup (options, imports, register) {
         solar_radiation: {
             title: 'Solstråling',
             count_up: true,
-            // @TODO
-            unit: '',
+            unit: 'µmol m<sup>2</sup> s<sup>-1</sup>',
             icon_classes: 'fas fa-sun'
         },
         lux: {
