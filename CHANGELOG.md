@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.5
+
+* Minor fixes to citylab os2display data.
+
 ## 1.1.4
 
 * Updated documentation.
