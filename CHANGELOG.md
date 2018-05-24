@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.1.6
+
+* Updated request in ckan_client.
+
 ## 1.1.5
 
 * Minor fixes to citylab os2display data.

@@ -11,6 +11,6 @@
     "provides": []
   },
   "dependencies": {
-    "request": "^2.83.0"
+    "request": "^2.87.0"
   }
 }
