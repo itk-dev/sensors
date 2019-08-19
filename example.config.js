@@ -11,11 +11,11 @@ let config = {};
 
 config.port = 3000;
 
-config.database_client = 'mariasql';
+config.database_client = 'mysql';
 
 config.database_connection = {
     host : '127.0.0.1',
-    db: 'db',
+    database: 'db',
     user: 'root',
     password: 'vagrant'
 };
@@ -30,7 +30,8 @@ config.allowed_apikeys = [];
 config.sensor_whitelist = [
     '0004A30B001E8EA2',
     '0004A30B001E1694',
-    '0004A30B001E307C'
+    '0004A30B001E307C',
+    'A81758FFFE03CFE0'
 ];
 
 config.logger = {
