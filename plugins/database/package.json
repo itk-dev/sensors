@@ -12,7 +12,7 @@
     ]
   },
   "dependencies": {
-    "knex": "^0.19.2",
+    "knex": "^0.19.5",
     "mariasql": "^0.2.6"
   }
 }
