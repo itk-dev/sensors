@@ -47,7 +47,7 @@ module.exports = function setup(options, imports, register) {
                         values.push({
                             sensor_id: 52,
                             type: 'battery',
-                            sensorResult.data.battery
+                            value: sensorResult.data.battery
                         });
                         break;
 
@@ -55,7 +55,7 @@ module.exports = function setup(options, imports, register) {
                         values.push({
                             sensor_id: 77,
                             type: 'pressure',
-                            sensotResult.data.pressure
+                            value: sensorResult.data.pressure
                         });
                         break;
 
