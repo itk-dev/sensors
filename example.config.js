@@ -11,7 +11,7 @@ let config = {};
 
 config.port = 3000;
 
-config.database_client = 'mariasql';
+config.database_client = 'mysql';
 
 config.database_connection = {
     host : '127.0.0.1',
