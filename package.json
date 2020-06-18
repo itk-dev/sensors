@@ -7,7 +7,8 @@
     "architect": "^0.1.13"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "npm-check-updates": "^7.0.1"
   },
   "scripts": {
     "start": "node app.js",
