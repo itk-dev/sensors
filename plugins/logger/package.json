@@ -10,6 +10,6 @@
     ]
   },
   "dependencies": {
-    "winston": "^3.0.0-rc1"
+    "winston": "^3.2.1"
   }
 }
