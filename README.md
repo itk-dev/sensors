@@ -9,8 +9,9 @@ Get containers up and running and install packages
 docker-compose pull
 docker-compose up --detach
 
-docker-compose exec node /bin/bash npm_install.sh
+docker-compose exec node ./npm_install.sh
 ```
+> **_NOTE_** All arguments passed to npm_install.sh will be passed on to the npm install command.
 
 Create a configuration file from example.config.js
 
@@ -28,8 +29,9 @@ docker-compose exec node npm run migrate
 ## Upgrading modules
 
 ```sh
-docker-compose exec node /bin/bash npm_upgrade.sh
+docker-compose exec node ./npm_upgrade.sh
 ```
+> **_NOTE_** All arguments passed to npm_upgrade.sh will be passed on to the npm install command.
 
 ## Documentation
 
