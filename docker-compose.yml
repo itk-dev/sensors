@@ -23,7 +23,7 @@ services:
       - ./:/home/node/app
     ports:
       - "3000"
-    command: "npm run start"
+    command: "npm run start-dev"
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=frontend"
