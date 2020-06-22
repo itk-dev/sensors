@@ -14,14 +14,15 @@ config.port = 3000;
 config.database_client = 'mysql';
 
 config.database_connection = {
-    host : '127.0.0.1',
+    host : 'mariadb',
     db: 'db',
-    user: 'root',
-    password: 'vagrant'
+    user: 'db',
+    password: 'db'
 };
 
 config.influxdb = {
-    host: 'localhost',
+    host: 'influxdb',
+    port: '8086',
     database: 'sensor'
 };
 
