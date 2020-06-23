@@ -9,7 +9,7 @@ networks:
 
 services:
   node:
-    image: node:10
+    image: node:14
     networks:
       - app
       - frontend
