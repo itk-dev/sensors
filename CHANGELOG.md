@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.2.0
+* Introducing docker for better development setup.
+* Upgrading plugins
+
 ## 1.1.6
 
 * Updated request in ckan_client.
