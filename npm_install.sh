@@ -2,7 +2,6 @@
 
 # Install main modules
 rm -rf node_modules
-#npm install --${1:-production}
 npm install "$@"
 
 # Install plugin dependencies.
