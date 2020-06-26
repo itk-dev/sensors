@@ -2,11 +2,16 @@
 Nodejs to collect sensor data.
 
 ## Install
-Install modules. This script installs modules for all plugins.
+
+Get containers up and running and install packages
 
 ```sh
-./npm_install.sh
+docker-compose pull
+docker-compose up --detach
+
+docker-compose exec node ./npm_install.sh
 ```
+> **_NOTE_** All arguments passed to npm_install.sh will be passed on to the npm install command.
 
 Create a configuration file from example.config.js
 
@@ -18,19 +23,15 @@ Edit the config to your needs.
 Setup the database with
 
 ```sh
-npm run migrate
-```
-
-## Running
-```sh
-npm run start
+docker-compose exec node npm run migrate
 ```
 
 ## Upgrading modules
 
 ```sh
-./npm_upgrade.sh
+docker-compose exec node ./npm_upgrade.sh
 ```
+> **_NOTE_** All arguments passed to npm_upgrade.sh will be passed on to the npm install command.
 
 ## Documentation
 
