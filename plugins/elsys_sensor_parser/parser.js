@@ -119,7 +119,6 @@ let parser = new Parser()
     });
 
 module.exports.elsysSensorParser = function() {
-
     return new Parser()
         .array("data", {
             type: parser,
