@@ -10,8 +10,16 @@ module.exports = function setup(options, imports, register) {
     const logger = imports.logger;
     const parser = imports.elsysSensorParser;
 
-    const applySensorToResult = function (result, sensorId, sensorType, sensorValue) {
-
+    /**
+     * Adds sensors results to the map passed in the first parameter.
+     * The result parameter must have a property named values which contains a list.
+     *
+     * @param result
+     * @param sensorId
+     * @param sensorType
+     * @param sensorValue
+     */
+    const addValueToResult = function (result, sensorId, sensorType, sensorValue) {
         result[sensorType + '_sensor_id'] = sensorId;
         result[sensorType + '_value'] = sensorValue;
         result.values.push({
@@ -30,19 +38,17 @@ module.exports = function setup(options, imports, register) {
          */
         try {
             let buf = Buffer.from(data.toString(), 'hex');
-
             let result = parser.parse(buf);
 
             let formattedResult = {};
             formattedResult['values'] = [];
 
             for (let key in result.data) {
-
                 let sensorResult = result.data[key];
 
                 switch (sensorResult.type) {
                     case 1:
-                        applySensorToResult(
+                        addValueToResult(
                             formattedResult,
                             134,
                             'water_temperature',
@@ -50,7 +56,7 @@ module.exports = function setup(options, imports, register) {
                         );
                         break;
                     case 2:
-                        applySensorToResult(
+                        addValueToResult(
                             formattedResult,
                             76,
                             'humidity',
@@ -58,7 +64,7 @@ module.exports = function setup(options, imports, register) {
                         );
                         break;
                     case 7:
-                        applySensorToResult(
+                        addValueToResult(
                             formattedResult,
                             52,
                             'battery',
@@ -66,7 +72,7 @@ module.exports = function setup(options, imports, register) {
                         );
                         break;
                     case 20:
-                        applySensorToResult(
+                        addValueToResult(
                             formattedResult,
                             77,
                             'pressure',
