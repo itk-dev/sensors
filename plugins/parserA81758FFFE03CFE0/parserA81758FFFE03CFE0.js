@@ -10,6 +10,17 @@ module.exports = function setup(options, imports, register) {
     const logger = imports.logger;
     const parser = imports.elsysSensorParser;
 
+    const applySensorToResult = function (result, sensorId, sensorType, sensorValue) {
+
+        result[sensorType + '_sensor_id'] = sensorId;
+        result[sensorType + '_value'] = sensorValue;
+        result.values.push({
+            sensor_id: sensorId,
+            type: sensorType,
+            value: sensorValue
+        });
+    };
+
     eventBus.on('parse.A81758FFFE03CFE0', function (data, returnEvent) {
         /**
          * Its not totally clear what the data structure should be when pushing to open data.
@@ -18,44 +29,54 @@ module.exports = function setup(options, imports, register) {
          * values...
          */
         try {
-            let result = parser.parse(data);
-            let values = [];
+            let buf = Buffer.from(data.toString(), 'hex');
 
-            for (let sensorResult in result.data) {
+            let result = parser.parse(buf);
+
+            let formattedResult = {};
+            formattedResult['values'] = [];
+
+            for (let key in result.data) {
+
+                let sensorResult = result.data[key];
+
                 switch (sensorResult.type) {
                     case 1:
-                        values.push({
-                            sensor_id: 74,
-                            type: 'air_temperature',
-                            value: sensorResult.data.temperature
-                        });
+                        applySensorToResult(
+                            formattedResult,
+                            134,
+                            'water_temperature',
+                            sensorResult.data.temperature
+                        );
                         break;
                     case 2:
-                        values.push({
-                            sensor_id: 76,
-                            type: 'humidity',
-                            value: sensorResult.data.humidity
-                        });
+                        applySensorToResult(
+                            formattedResult,
+                            76,
+                            'humidity',
+                            sensorResult.data.humidity
+                        );
                         break;
                     case 7:
-                        values.push({
-                            sensor_id: 52,
-                            type: 'battery',
-                            value: sensorResult.data.battery
-                        });
+                        applySensorToResult(
+                            formattedResult,
+                            52,
+                            'battery',
+                            sensorResult.data.battery
+                        );
                         break;
                     case 20:
-                        values.push({
-                            sensor_id: 77,
-                            type: 'pressure',
-                            value: sensorResult.data.pressure
-                        });
+                        applySensorToResult(
+                            formattedResult,
+                            77,
+                            'pressure',
+                            sensorResult.data.pressure
+                        );
                         break;
                 }
             }
 
-            result.values = values;
-            eventBus.emit(returnEvent, result);
+            eventBus.emit(returnEvent, formattedResult);
         } catch (err) {
             logger.error('parserA81758FFFE03CFE0 - Could not parse: ' + data);
             eventBus.emit(returnEvent, {
