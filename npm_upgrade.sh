@@ -2,15 +2,15 @@
 
 # Install main modules
 rm -rf node_modules
-npm install --${1:-production}
+npm install "$@"
 
 # Install plugin dependencies.
 for folder in plugins/*; do
   if [ -d $folder ]; then
-    cd $folder
-    npm-check-updates -u
+    cd $folder || exit
+    npx npm-check-updates -u
     rm -rf node_modules
-    npm install --${1:-production}
+    npm install "$@"
     cd ../..
   fi
 done
