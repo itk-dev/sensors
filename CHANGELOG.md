@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.4.1
+* Upgrading plugins
+
 ## 1.4.0
 * Changing payloads mapping due to [SUPPORT-113](https://jira.itkdev.dk/browse/SUPP0RT-113)
 

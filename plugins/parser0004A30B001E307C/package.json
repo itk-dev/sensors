@@ -11,6 +11,6 @@
     "provides": []
   },
   "dependencies": {
-    "binary-parser": "^1.6.2"
+    "binary-parser": "^1.7.0"
   }
 }
