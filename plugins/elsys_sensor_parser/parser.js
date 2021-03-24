@@ -41,6 +41,14 @@ let pulseCountParser = new Parser()
 let pulseCountAbsoluteParser = new Parser()
     .uint32('pulse_count_absolute');
 
+let externalTemperatureParser = new Parser()
+    .uint16('external_temperature', {
+        formatter: function(value) {
+
+            return value / 10;
+        }
+    });
+
 let externalDigitalButtonParser = new Parser()
     .bit1('external_digital_button');
 
@@ -98,7 +106,7 @@ let parser = new Parser()
             9: gpsParser,
             10: pulseCountParser,
             11: pulseCountAbsoluteParser,
-            12: temperatureParser,
+            12: externalTemperatureParser,
             13: externalDigitalButtonParser,
             14: externalDistanceParser,
             15: accelerationMovementsParser,
