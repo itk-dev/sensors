@@ -13,6 +13,6 @@
     ]
   },
   "dependencies": {
-    "influx": "^5.5.2"
+    "influx": "^5.8.0"
   }
 }
