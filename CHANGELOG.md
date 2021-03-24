@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 1.4.0
+* Changing payloads mapping due to [SUPPORT-113](https://jira.itkdev.dk/browse/SUPP0RT-113)
+
 ## 1.2.0
 * Introducing docker for better development setup.
 * Upgrading plugins
