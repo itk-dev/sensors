@@ -50,8 +50,8 @@ module.exports = function setup(options, imports, register) {
                     case 1:
                         addValueToResult(
                             formattedResult,
-                            134,
-                            'water_temperature',
+                            74,
+                            'air_temperature',
                             sensorResult.data.temperature
                         );
                         break;
@@ -71,6 +71,13 @@ module.exports = function setup(options, imports, register) {
                             sensorResult.data.battery
                         );
                         break;
+                    case 12:
+                        addValueToResult(
+                            formattedResult,
+                            134,
+                            'water_temperature',
+                            sensorResult.data.external_temperature
+                        )
                     case 20:
                         addValueToResult(
                             formattedResult,
@@ -85,6 +92,7 @@ module.exports = function setup(options, imports, register) {
             eventBus.emit(returnEvent, formattedResult);
         } catch (err) {
             logger.error('parserA81758FFFE03CFE0 - Could not parse: ' + data);
+            logger.error('parserA81758FFFE03CFE0 - Error: ' + err);
             eventBus.emit(returnEvent, {
                 error: err
             });
