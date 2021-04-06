@@ -1,0 +1,15 @@
+{
+  "name": "parserA81758FFFE052540",
+  "version": "0.0.1",
+  "description": "",
+  "main": "parserA81758FFFE052540.js",
+  "private": true,
+  "plugin": {
+    "consumes": [
+      "eventbus",
+      "logger",
+      "elsysSensorParser"
+    ],
+    "provides": []
+  }
+}
