@@ -1,7 +1,7 @@
 /**
  * @file
  *
- * Sensor A81758FFFE03CFE0
+ * Sensor A81758FFFE052540
  */
 'use strict';
 
@@ -29,7 +29,7 @@ module.exports = function setup(options, imports, register) {
         });
     };
 
-    eventBus.on('parse.A81758FFFE03CFE0', function (data, returnEvent) {
+    eventBus.on('parse.A81758FFFE052540', function (data, returnEvent) {
         /**
          * Its not totally clear what the data structure should be when pushing to open data.
          * For example is the sensor_id for the air_temperature always 74? Is the type always air_temperature?
@@ -92,8 +92,8 @@ module.exports = function setup(options, imports, register) {
 
             eventBus.emit(returnEvent, formattedResult);
         } catch (err) {
-            logger.error('parserA81758FFFE03CFE0 - Could not parse: ' + data);
-            logger.error('parserA81758FFFE03CFE0 - Error: ' + err);
+            logger.error('parserA81758FFFE052540 - Could not parse: ' + data);
+            logger.error('parserA81758FFFE052540 - Error: ' + err);
             eventBus.emit(returnEvent, {
                 error: err
             });
