@@ -10,6 +10,7 @@ module.exports = [
     './plugins/parser0004A30B001E307C',
     './plugins/parser0004A30B001E1694',
     './plugins/parserA81758FFFE03CFE0',
+    './plugins/parserA81758FFFE052540',
     './plugins/ckan_client',
     './plugins/sensordata'
 ];
