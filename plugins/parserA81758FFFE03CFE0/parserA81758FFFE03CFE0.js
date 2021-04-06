@@ -78,6 +78,7 @@ module.exports = function setup(options, imports, register) {
                             'water_temperature',
                             sensorResult.data.external_temperature
                         )
+                        break;
                     case 20:
                         addValueToResult(
                             formattedResult,
