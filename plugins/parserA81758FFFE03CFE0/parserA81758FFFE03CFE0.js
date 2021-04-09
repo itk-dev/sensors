@@ -6,7 +6,7 @@
 
 'use strict';
 
-const ElsysDecoder = require('./elsys_decoder');
+const ElsysDecoder = require('../elsys_sensor_parser/elsys_decoder');
 
 module.exports = function setup(options, imports, register) {
     const eventBus = imports.eventbus;
