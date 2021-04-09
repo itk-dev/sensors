@@ -3,12 +3,16 @@
  *
  * Sensor A81758FFFE03CFE0
  */
+
 'use strict';
+
+const ElsysDecoder = require('./elsys_decoder');
 
 module.exports = function setup(options, imports, register) {
     const eventBus = imports.eventbus;
     const logger = imports.logger;
-    const parser = imports.elsysSensorParser;
+
+    const elsysParser = new ElsysDecoder.ElsysDecoder();
 
     /**
      * Adds sensors results to the map passed in the first parameter.
@@ -37,58 +41,46 @@ module.exports = function setup(options, imports, register) {
          * values...
          */
         try {
-            let buf = Buffer.from(data.toString(), 'hex');
-            let result = parser.parse(buf);
+            let result = elsysParser.decodeHex(data);
 
-            let formattedResult = {};
-            formattedResult['values'] = [];
+            let formattedResult = {
+                'values': []
+            };
 
-            for (let key in result.data) {
-                let sensorResult = result.data[key];
+            addValueToResult(
+                formattedResult,
+                74,
+                'air_temperature',
+                result.temperature
+            );
 
-                switch (sensorResult.type) {
-                    case 1:
-                        addValueToResult(
-                            formattedResult,
-                            74,
-                            'air_temperature',
-                            sensorResult.data.temperature
-                        );
-                        break;
-                    case 2:
-                        addValueToResult(
-                            formattedResult,
-                            76,
-                            'humidity',
-                            sensorResult.data.humidity
-                        );
-                        break;
-                    case 7:
-                        addValueToResult(
-                            formattedResult,
-                            52,
-                            'battery',
-                            sensorResult.data.battery
-                        );
-                        break;
-                    case 12:
-                        addValueToResult(
-                            formattedResult,
-                            134,
-                            'water_temperature',
-                            sensorResult.data.external_temperature
-                        );
-                        break;
-                    case 20:
-                        addValueToResult(
-                            formattedResult,
-                            77,
-                            'pressure',
-                            sensorResult.data.pressure
-                        );
-                        break;
-                }
-            }
+            addValueToResult(
+                formattedResult,
+                76,
+                'humidity',
+                result.humidity
+            );
+
+            addValueToResult(
+                formattedResult,
+                52,
+                'battery',
+                result.battery
+            );
+
+            addValueToResult(
+                formattedResult,
+                134,
+                'water_temperature',
+                result.externalTemperature
+            );
+
+            addValueToResult(
+                formattedResult,
+                77,
+                'pressure',
+                result.pressure
+            );
 
             eventBus.emit(returnEvent, formattedResult);
         } catch (err) {
