@@ -42,47 +42,44 @@ module.exports = function setup(options, imports, register) {
          */
         try {
             let result = elsysParser.decodeHex(data);
-
-            let formattedResult = {
-                'values': []
-            };
+            result.values = [];
 
             addValueToResult(
-                formattedResult,
+                result,
                 74,
                 'air_temperature',
                 result.temperature
             );
 
             addValueToResult(
-                formattedResult,
+                result,
                 76,
                 'humidity',
                 result.humidity
             );
 
             addValueToResult(
-                formattedResult,
+                result,
                 52,
                 'battery',
                 result.battery
             );
 
             addValueToResult(
-                formattedResult,
+                result,
                 134,
                 'water_temperature',
                 result.externalTemperature
             );
 
             addValueToResult(
-                formattedResult,
+                result,
                 77,
                 'pressure',
                 result.pressure
             );
 
-            eventBus.emit(returnEvent, formattedResult);
+            eventBus.emit(returnEvent, result);
         } catch (err) {
             logger.error('parserA81758FFFE03CFE0 - Could not parse: ' + data);
             logger.error('parserA81758FFFE03CFE0 - Error: ' + err);
