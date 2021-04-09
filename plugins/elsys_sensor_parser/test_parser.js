@@ -4,10 +4,9 @@
 // Run this script from the commandline e.g. "node test_parser.js"
 // to watch the data parsed and displayed as json.
 
-const parser = require('./parser').elsysSensorParser();
+const ElsysParser = require('./elsys_decoder');
 
-let data = '0100e202290400270506060308070d62';
-let buf = Buffer.from(data, 'hex');
-let result = parser.parse(buf);
+let elsysParser = new ElsysParser.ElsysDecoder();
 
-console.log(JSON.stringify(result, null, 2));
+console.log(JSON.stringify(elsysParser.decodeHex('0100e202290400270506060308070d62'), null, 2));
+console.log(JSON.stringify(elsysParser.decodeHex('0100f5021c0301023d070e1e0c00ee0f0014000f4229'), null, 2));
