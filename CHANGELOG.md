@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 1.4.3
+
+* Fixed parsers.
+
 ## 1.4.2
 
 * Added parser.
