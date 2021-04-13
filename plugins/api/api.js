@@ -122,6 +122,7 @@ module.exports = function setup (options, imports, register) {
 
                     eventBus.once(returnEvent, function (result) {
                         if (result.error) {
+                            logger.error('API: Could not parse data: ' + JSON.stringify(data) + ' with result: ' + JSON.stringify(result));
                             res.status(400).send();
                             return;
                         }
